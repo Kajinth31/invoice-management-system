@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FileUpload from './components/FileUpload';
 import InvoiceTable from './components/InvoiceTable';
-
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export default function App() {
