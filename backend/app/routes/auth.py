@@ -1,33 +1,36 @@
 from fastapi import APIRouter, HTTPException
-from app.schemas.user import UserCreate
+from pydantic import BaseModel, EmailStr
 from app.database import users_collection
-from app.utils.security import hash_password
+from app.utils.security import hash_password, verify_password
 
 router = APIRouter()
+
+
+class UserCreate(BaseModel):
+    name: str
+    shop: str
+    email: EmailStr
+    password: str
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
 
 @router.post("/register")
 async def register_user(user: UserCreate):
     try:
-        # Check if email already exists
         existing_user = await users_collection.find_one({"email": user.email})
 
         if existing_user:
-            raise HTTPException(
-                status_code=400,
-                detail="Email already registered"
-            )
+            raise HTTPException(status_code=400, detail="Email already registered")
 
-        # Extra safety check before hashing
         if len(user.password.encode("utf-8")) > 72:
-            raise HTTPException(
-                status_code=400,
-                detail="Password must be 72 bytes or less"
-            )
+            raise HTTPException(status_code=400, detail="Password must be 72 bytes or less")
 
-        # Hash password
         hashed_password = hash_password(user.password)
 
-        # Prepare user document
         new_user = {
             "name": user.name,
             "shop": user.shop,
@@ -35,7 +38,6 @@ async def register_user(user: UserCreate):
             "password": hashed_password
         }
 
-        # Save user
         result = await users_collection.insert_one(new_user)
 
         return {
@@ -47,5 +49,40 @@ async def register_user(user: UserCreate):
     except HTTPException:
         raise
     except Exception as e:
-        print("REGISTER ERROR:", e)
-        raise HTTPException(status_code=500, detail="Registration failed")
+        print("REGISTER ERROR:", repr(e))
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/login")
+async def login_user(user: UserLogin):
+    try:
+        print("LOGIN EMAIL RECEIVED:", user.email)
+
+        existing_user = await users_collection.find_one({"email": user.email})
+        print("FOUND USER:", existing_user)
+
+        if not existing_user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        password_ok = verify_password(user.password, existing_user["password"])
+
+        if not password_ok:
+            raise HTTPException(status_code=401, detail="Invalid password")
+
+        return {
+            "status": "success",
+            "message": "Login successful",
+            "token": str(existing_user["_id"]),  # temporary token for now
+            "user": {
+                "id": str(existing_user["_id"]),
+                "name": existing_user["name"],
+                "shop": existing_user["shop"],
+                "email": existing_user["email"]
+            }
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print("LOGIN ERROR:", repr(e))
+        raise HTTPException(status_code=500, detail=str(e))
