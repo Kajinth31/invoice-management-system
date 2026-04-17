@@ -1,11 +1,25 @@
-from pymongo import MongoClient
-import certifi
-from app.config import MONGO_URI, DATABASE_NAME, PRODUCTS_COLLECTION
+import os
+from dotenv import load_dotenv
+from motor.motor_asyncio import AsyncIOMotorClient
 
-client = MongoClient(
-    MONGO_URI,
-    tlsCAFile=certifi.where()
-)
+# Load values from backend/.env
+load_dotenv()
 
+# Read values from environment
+MONGO_URI = os.getenv("MONGO_URI")
+DATABASE_NAME = os.getenv("DATABASE_NAME", "smart_retail")
+
+# Check if MONGO_URI exists
+if not MONGO_URI:
+    raise ValueError("MONGO_URI is missing in .env")
+
+# Create MongoDB client
+client = AsyncIOMotorClient(MONGO_URI)
+
+# Select database
 db = client[DATABASE_NAME]
-products_col = db[PRODUCTS_COLLECTION]
+
+# Collections
+users_collection = db["users"]
+products_collection = db["products"]
+invoices_collection = db["invoices"]
