@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export default function FileUpload({ onUpload, isProcessing }) {
   const [isDragging, setIsDragging] = useState(false);
@@ -38,65 +38,82 @@ export default function FileUpload({ onUpload, isProcessing }) {
   };
 
   return (
-    <div 
-      // MODIFIED: Changed max-width and padding to make it fill the space better
-      className={`w-full p-10 sm:p-16 rounded-2xl border shadow-2xl text-center transition-all duration-300 flex flex-col items-center justify-center ${
-        isDragging 
-          ? 'bg-blue-600/10 border-blue-400 border-dashed border-2 scale-[1.01]' 
-          : 'bg-gray-900/40 border-gray-800 border-solid hover:border-blue-500/30'
+    <div
+      className={`w-full rounded-2xl border p-5 text-center shadow-sm transition-all duration-200 sm:p-8 ${
+        isDragging
+          ? "border-blue-400 bg-blue-50 ring-4 ring-blue-100"
+          : "border-blue-100 bg-gradient-to-br from-white to-blue-50"
       }`}
       onDragEnter={handleDragEnter}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {/* MODIFIED: Added an icon container for a cleaner look */}
-      <div className={`mb-6 p-4 rounded-full bg-gray-950 border transition-colors ${isDragging ? 'border-blue-400 text-blue-400' : 'border-gray-800 text-blue-500/50'}`}>
-        <svg 
-          className="w-12 h-12" 
-          fill="none" 
-          stroke="currentColor" 
+      {/* Icon */}
+      <div
+        className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border transition-colors sm:h-20 sm:w-20 ${
+          isDragging
+            ? "border-blue-300 bg-blue-100 text-blue-600"
+            : "border-blue-100 bg-white text-blue-600"
+        }`}
+      >
+        <svg
+          className="h-8 w-8 sm:h-10 sm:w-10"
+          fill="none"
+          stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.7"
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+          />
         </svg>
       </div>
 
-      <h2 className="text-2xl font-bold mb-2 text-white tracking-tight">
+      {/* Title */}
+      <h2 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
         Upload Supplier Invoice
       </h2>
-      <p className="mb-8 text-gray-400 max-w-sm mx-auto text-sm">
-        Drag and drop your invoice here. SmartRetail will automatically extract products, costs, and calculate your new RRPs.
+
+      {/* Description */}
+      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-gray-500">
+        Drag and drop your invoice here or choose a file to extract product details,
+        case costs, and smart selling prices automatically.
       </p>
-      
-      <div className="flex flex-col items-center justify-center w-full">
-        <input 
-          type="file" 
+
+      {/* Upload input */}
+      <div className="mt-6 flex flex-col items-center justify-center">
+        <input
+          type="file"
           accept="image/*,.pdf"
-          className="hidden" 
+          className="hidden"
           id="invoice-upload"
           onChange={onUpload}
           disabled={isProcessing}
         />
-        
-        <label 
-          htmlFor="invoice-upload" 
-          className={`w-full max-w-full px-8 py-4 rounded-xl font-bold cursor-pointer transition-all duration-200 shadow-lg flex items-center justify-center gap-2 ${
-            isProcessing 
-              ? 'bg-gray-800 text-gray-500 border border-gray-700 cursor-not-allowed' 
-              : 'bg-blue-600 text-white hover:bg-blue-500 active:scale-95'
+
+        <label
+          htmlFor="invoice-upload"
+          className={`inline-flex min-w-[200px] items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold shadow-sm transition-all duration-200 sm:text-base ${
+            isProcessing
+              ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-500"
+              : "cursor-pointer bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98]"
           }`}
         >
           {isProcessing ? (
-             <>
-               <span className="animate-spin text-lg">⏳</span>
-               Scanning...
-             </>
-          ) : 'Select Invoice File'}
+            <span className="flex items-center gap-2">
+              <span className="animate-spin">⏳</span>
+              Scanning...
+            </span>
+          ) : (
+            "Select Invoice File"
+          )}
         </label>
-        
-        <p className="mt-6 text-[10px] text-gray-500 uppercase tracking-[0.2em] font-semibold">
-          Supports JPG, PNG, or PDF
+
+        <p className="mt-4 text-[11px] font-medium uppercase tracking-[0.18em] text-gray-400">
+          Supports JPG, PNG or PDF
         </p>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FileUpload from "../components/FileUpload";
 import InvoiceTable from "../components/InvoiceTable";
+import Footer from "../components/Footer";
 import {
   searchProducts,
   uploadInvoice,
@@ -125,10 +126,12 @@ export default function Dashboard() {
     navigate("/login");
   };
 
+  const isSearching = searchTerm.trim().length > 0;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50 text-gray-900">
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
-        <div className="space-y-6">
+      <div className="mx-auto max-w-7xl px-3 py-3 sm:px-5 sm:py-5 lg:px-8">
+        <div className="space-y-4 sm:space-y-5">
           {/* Header */}
           <header className="rounded-2xl border border-blue-100 bg-white p-5 shadow-xl sm:p-6">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
@@ -137,13 +140,26 @@ export default function Dashboard() {
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-lg font-bold text-white shadow-md">
                     S
                   </div>
-                  <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                      SmartRetail Dashboard
-                    </h1>
-                    <p className="text-sm text-gray-500">
-                      Invoice and product management
-                    </p>
+
+                  <div className="min-w-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                          SmartRetail Dashboard
+                        </h1>
+                        <p className="text-sm text-gray-500">
+                          Invoice and product management
+                        </p>
+                      </div>
+
+                      {/* Mobile logout only */}
+                      <button
+                        onClick={handleLogout}
+                        className="rounded-xl border border-red-200 bg-white px-3 py-2 text-xs font-medium text-red-600 transition hover:bg-red-50 sm:hidden"
+                      >
+                        Logout
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -167,9 +183,10 @@ export default function Dashboard() {
                   </div>
                 </div>
 
+                {/* Desktop logout only */}
                 <button
                   onClick={handleLogout}
-                  className="rounded-xl border border-red-200 bg-white px-4 py-3 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                  className="hidden rounded-xl border border-red-200 bg-white px-4 py-3 text-sm font-medium text-red-600 transition hover:bg-red-50 sm:block"
                 >
                   Logout
                 </button>
@@ -190,46 +207,72 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* Summary Cards */}
-          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <div className="rounded-2xl border border-blue-100 bg-white p-5 shadow-md">
-              <p className="text-sm text-gray-500">Total Products</p>
-              <h3 className="mt-2 text-3xl font-bold text-gray-900">{products.length}</h3>
-            </div>
-
-            <div className="rounded-2xl border border-blue-100 bg-white p-5 shadow-md">
-              <p className="text-sm text-gray-500">Default VAT</p>
-              <h3 className="mt-2 text-3xl font-bold text-gray-900">{vat}%</h3>
-            </div>
-
-            <div className="rounded-2xl border border-blue-100 bg-white p-5 shadow-md">
-              <p className="text-sm text-gray-500">Default Margin</p>
-              <h3 className="mt-2 text-3xl font-bold text-gray-900">{margin}%</h3>
-            </div>
-
-            <div className="rounded-2xl border border-blue-100 bg-white p-5 shadow-md">
-              <p className="text-sm text-gray-500">System Status</p>
-              <h3 className="mt-2 text-lg font-semibold text-green-600">Ready</h3>
-            </div>
-          </section>
-
-          {/* Upload Section */}
-          <section className="rounded-2xl border border-blue-100 bg-white p-5 shadow-xl sm:p-6">
-            <div className="mb-4">
-              <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">
-                Upload Invoice
-              </h2>
-              <p className="mt-1 text-sm text-gray-500">
-                Upload PDF or image invoices and extract product details automatically.
+          {/* Smaller Summary Cards */}
+          <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <div className="rounded-2xl border border-blue-100 bg-white px-4 py-4 shadow-sm">
+              <p className="text-xs font-medium text-gray-500 sm:text-sm">
+                Total Products
               </p>
+              <h3 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl">
+                {products.length}
+              </h3>
             </div>
 
-            <FileUpload onUpload={handleFileUpload} isProcessing={isProcessing} />
+            <div className="rounded-2xl border border-blue-100 bg-white px-4 py-4 shadow-sm">
+              <p className="text-xs font-medium text-gray-500 sm:text-sm">
+                Default VAT
+              </p>
+              <h3 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl">
+                {vat}%
+              </h3>
+            </div>
+
+            <div className="rounded-2xl border border-blue-100 bg-white px-4 py-4 shadow-sm">
+              <p className="text-xs font-medium text-gray-500 sm:text-sm">
+                Default Margin
+              </p>
+              <h3 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl">
+                {margin}%
+              </h3>
+            </div>
+
+            <div className="rounded-2xl border border-blue-100 bg-white px-4 py-4 shadow-sm">
+              <p className="text-xs font-medium text-gray-500 sm:text-sm">
+                System Status
+              </p>
+              <h3 className="mt-2 text-base font-semibold text-green-600 sm:text-lg">
+                Ready
+              </h3>
+            </div>
           </section>
+
+          {/* Hide upload while searching */}
+          {!isSearching && (
+            <section className="rounded-2xl border border-blue-100 bg-white p-4 shadow-lg sm:p-5">
+              <div className="mb-4">
+                <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">
+                  Upload Invoice
+                </h2>
+                <p className="mt-1 text-sm text-gray-500">
+                  Upload PDF or image invoices and extract product details automatically.
+                </p>
+              </div>
+
+              <FileUpload onUpload={handleFileUpload} isProcessing={isProcessing} />
+            </section>
+          )}
+
+          {/* Optional searching info */}
+          {isSearching && (
+            <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+              Showing search results for:{" "}
+              <span className="font-semibold">{searchTerm}</span>
+            </div>
+          )}
 
           {/* Products Table */}
-          <section className="rounded-2xl border border-blue-100 bg-white p-5 shadow-xl sm:p-6">
-            <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <section className="rounded-2xl border border-blue-100 bg-white p-4 shadow-lg sm:p-5">
+            <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">
                   Products Table
@@ -239,26 +282,25 @@ export default function Dashboard() {
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-3">
-                <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-2 text-sm text-gray-700">
+              <div className="flex flex-wrap gap-2">
+                <div className="rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-gray-700 sm:px-4 sm:text-sm">
                   VAT: <span className="font-semibold text-gray-900">{vat}%</span>
                 </div>
-                <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-2 text-sm text-gray-700">
+                <div className="rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-gray-700 sm:px-4 sm:text-sm">
                   Margin: <span className="font-semibold text-gray-900">{margin}%</span>
                 </div>
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-blue-100">
-              <InvoiceTable
-                products={products}
-                onSave={handleSaveToDatabase}
-                margin={margin}
-                vat={vat}
-                onUpdateProduct={handleUpdateProduct}
-              />
-            </div>
+            <InvoiceTable
+              products={products}
+              onSave={handleSaveToDatabase}
+              margin={margin}
+              vat={vat}
+              onUpdateProduct={handleUpdateProduct}
+            />
           </section>
+          <Footer />
         </div>
       </div>
     </div>
